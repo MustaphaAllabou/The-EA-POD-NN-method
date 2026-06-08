@@ -5,7 +5,7 @@ This repository contains the code developed for my thesis work on the EA-POD-NN 
 
 ## Description
 
-Brief description of the project.
+This project contains the code developped for the reduction of the txo dimensional shallow water equations. The methode develloped here is a non-intusive method, since it uses the high fidelity solver (Dassflow here) only to generate the snapshots. the the training and online phase are completly decoupled from the pdf and the solver.
 
 ## Requirements
 
