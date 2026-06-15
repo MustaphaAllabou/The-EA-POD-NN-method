@@ -18,7 +18,7 @@ Construct the high fidelity simulations in parallel using the finite volumes bas
 
 ### POD_Basis.py
 Construct the POD reduced basis $\mathbf{B}_{rb}$ using the generated high fidelity snapshots $\mathbf{S}$.
-
+ 
 ### POD_Basis_error.py
 
 Constructs the reduced basis $\mathbf{B}*{\mathrm{er}}$ of the error matrix $\mathbf{E}$, given a reduced basis $\mathbf{B}*{\mathrm{rb}}$.
