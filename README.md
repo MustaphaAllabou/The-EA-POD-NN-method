@@ -17,10 +17,10 @@ construct the parameter space and store them in hdf5 file to be used lated for t
 construct the high fidelity simulations in parallel using the finite volumes based solver (Dassflow2d).
 
 ### POD_Basis.py
-Construct the POD reduced baisi usint the generated high fidelity snapshots.
+Construct the POD reduced baisi $\mathbf{B}_{rb}$ using the generated high fidelity snapshots $\mathbf{S}$.
 
 ### POD_Basis_error.py
-construct the reduced basis of the error matrix computed guiven a reduced basis $**B**_{rb}$
+construct the reduced basis $\mathbf{B}_{er}$ of the error matrix $\mathbf{E}$ computed guiven a reduced basis $\mathbf{B}_{rb}$: $\mathbf{E} = \mathbf{S} - \mathbf{B}_{rb}\mathbf{B}_{rb}^T\mathbf{S}$.
 ### EA_POD-NN_offline.py
 ### EA_POD-NN_online.py
 ### Aude_test_case_online.py
