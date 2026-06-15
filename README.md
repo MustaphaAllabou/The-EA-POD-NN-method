@@ -21,16 +21,15 @@ Construct the POD reduced basis $\mathbf{B}_{rb}$ using the generated high fidel
  
 ### POD_Basis_error.py
 
-Constructs the reduced basis $\mathbf{B}*{\mathrm{er}}$ of the error matrix $\mathbf{E}$, given a reduced basis $\mathbf{B}*{\mathrm{rb}}$.
+Construct the POD reduced basis $\mathbf{B}_{er}$ of the error matrix $\mathbf{E}$, computed from a given reduced basis $\mathbf{B}_{rb}$ and the high-fidelity snapshot matrix $\mathbf{S}$.
 
 The error matrix is defined as:
 
 $$
-\mathbf{E} = \mathbf{S} - \mathbf{B}*{\mathrm{rb}}\mathbf{B}*{\mathrm{rb}}^{T}\mathbf{S}
+\mathbf{E} = \mathbf{S} - \mathbf{B}_{rb}\mathbf{B}_{rb}^{T}\mathbf{S}
 $$
 
-where $\mathbf{S}$ is the snapshot matrix and $\mathbf{B}*{\mathrm{rb}}\mathbf{B}*{\mathrm{rb}}^{T}\mathbf{S}$ is the projection of $\mathbf{S}$ onto the reduced basis $\mathbf{B}_{\mathrm{rb}}$.
-
+where $\mathbf{B}_{rb}\mathbf{B}_{rb}^{T}\mathbf{S}$ is the projection of $\mathbf{S}$ onto the reduced basis $\mathbf{B}_{rb}$.
 ### EA_POD-NN_offline.py
 ### EA_POD-NN_online.py
 ### Aude_test_case_online.py
