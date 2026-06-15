@@ -17,7 +17,7 @@ Construct the parameter space and store them in hdf5 file to be used lated for t
 Construct the high fidelity simulations in parallel using the finite volumes based solver (Dassflow2d).
 
 ### POD_Basis.py
-Construct the POD reduced basis $\mathbf{B}_{rb}$ using the generated high fidelity snapshots $\mathbf{S}$.
+Construct the POD reduced basis $\mathbf{B}\_{rb}$ using the generated high fidelity snapshots $\mathbf{S}$.
  
 ### POD_Basis_error.py
 
