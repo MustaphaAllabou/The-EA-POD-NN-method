@@ -25,7 +25,7 @@ Construct the POD reduced basis **B_er** of the error matrix **E**, computed fro
 
 The error matrix is defined as:
 
-````markdown
+````
 The error matrix is defined as:
 
 ```
