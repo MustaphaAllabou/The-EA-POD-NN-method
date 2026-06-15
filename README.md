@@ -20,7 +20,7 @@ construct the high fidelity simulations in parallel using the finite volumes bas
 Construct the POD reduced baisi usint the generated high fidelity snapshots.
 
 ### POD_Basis_error.py
-construct the reduced basis of the error matrix computed guiven a reduced basis $Brb_{rb}$
+construct the reduced basis of the error matrix computed guiven a reduced basis $**B**_{rb}$
 ### EA_POD-NN_offline.py
 ### EA_POD-NN_online.py
 ### Aude_test_case_online.py
