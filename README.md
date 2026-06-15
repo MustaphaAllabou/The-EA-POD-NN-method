@@ -28,7 +28,7 @@ The error matrix is defined as:
 ````markdown
 The error matrix is defined as:
 
-```text
+```
 E = S - B_rb B_rb^T S
 ````
 
@@ -38,7 +38,7 @@ where **B_rb B_rb^T S** is the projection of **S** onto the reduced basis **B_rb
 
 Uses the snapshots and errors projected onto their corresponding reduced spaces, and trains the neural networks to learn the reduced coefficients of the snapshots and errors:
 
-```text
+```
 S_rb = B_rb^T S
 S_er = B_er^T E
 ```
