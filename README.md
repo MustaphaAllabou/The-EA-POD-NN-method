@@ -30,9 +30,15 @@ $$
 $$
 
 where $\mathbf{B}_{rb}\mathbf{B}_{rb}^{T}\mathbf{S}$ is the projection of $\mathbf{S}$ onto the reduced basis $\mathbf{B}_{rb}$.
+
 ### EA_POD-NN_offline.py
+Uses the projected snapshots and errors onto their coresponding reduced spaces, and train the neural networks to learn the reduced coeficients of the snapshots $\mathbbf{S}_{rb}=\mathbf{B}_{rb}^{T}\mathbf{S}$ and of errors $\mathbbf{S}_{er}=\mathbf{B}_{er}^{T}\mathbf{E}$.
+
 ### EA_POD-NN_online.py
+Once the offline phase is finished and the neural networks are optimized, this code serves to predict a solution $\mathbf{u}_{h}(\mu_{new})$ for new parameter value $\mu_{new}$.
+
 ### Aude_test_case_online.py
+This code use the hight fidelity solver to compute the reference solution $\mathbf{u}_{h}(\mu_{new})$ and compare it to the reduced basis one $\mathbf{u}_{rb}(\mu_{new})$ predicted one. The code also plot the diference, histograme of errors and mean averaged arrors in function of time **B_er**.
 
 ## Requirements
 
