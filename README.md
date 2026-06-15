@@ -51,7 +51,7 @@ Once the offline phase is completed and the neural networks are optimized, this 
 
 ### Aude_test_case_online.py
 
-Uses the high-fidelity solver to compute the reference solution **u_h(mu_new)** and compares it with the reduced-order prediction **u_rb(mu_new)**. The code also plots the difference between both solutions, the error histograms, and the mean averaged errors as a function of time.
+Uses the high-fidelity solver to compute the reference solution **u_h(mu_new)** and compares it with the reduced-order prediction **u_rb(mu_new)**. The code also plots the difference between both solutions, the error histograms, and the mean averaged errors as a function of time. 
 
 ```
 ```
