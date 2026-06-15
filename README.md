@@ -17,28 +17,44 @@ Construct the parameter space and store them in hdf5 file to be used lated for t
 Construct the high fidelity simulations in parallel using the finite volumes based solver (Dassflow2d).
 
 ### POD_Basis.py
-Construct the POD reduced basis $\mathbf{B}\_{rb}$ using the generated high fidelity snapshots $\mathbf{S}$.
+Construct the POD reduced basis $\mathbf{B}\_{rb}$ using the generated high fidelity snapshots **S**.
  
 ### POD_Basis_error.py
 
-Construct the POD reduced basis $\mathbf{B}_{er}$ of the error matrix $\mathbf{E}$, computed from a given reduced basis $\mathbf{B}_{rb}$ and the high-fidelity snapshot matrix $\mathbf{S}$.
+Construct the POD reduced basis **B_er** of the error matrix **E**, computed from a given reduced basis **B_rb** and the high-fidelity snapshot matrix **S**.
 
 The error matrix is defined as:
 
-$$
-\mathbf{E} = \mathbf{S} - \mathbf{B}_{rb}\mathbf{B}_{rb}^{T}\mathbf{S}
-$$
+````markdown
+The error matrix is defined as:
 
-where $\mathbf{B}_{rb}\mathbf{B}_{rb}^{T}\mathbf{S}$ is the projection of $\mathbf{S}$ onto the reduced basis $\mathbf{B}_{rb}$.
+```text
+E = S - B_rb B_rb^T S
+````
+
+where **B_rb B_rb^T S** is the projection of **S** onto the reduced basis **B_rb**.
 
 ### EA_POD-NN_offline.py
-Uses the projected snapshots and errors onto their coresponding reduced spaces, and train the neural networks to learn the reduced coeficients of the snapshots $\mathbbf{S}_{rb}=\mathbf{B}_{rb}^{T}\mathbf{S}$ and of errors $\mathbbf{S}_{er}=\mathbf{B}_{er}^{T}\mathbf{E}$.
+
+Uses the snapshots and errors projected onto their corresponding reduced spaces, and trains the neural networks to learn the reduced coefficients of the snapshots and errors:
+
+```text
+S_rb = B_rb^T S
+S_er = B_er^T E
+```
+
+where **S_rb** and **S_er** are the reduced representations of the snapshots and errors, respectively.
 
 ### EA_POD-NN_online.py
-Once the offline phase is finished and the neural networks are optimized, this code serves to predict a solution $\mathbf{u}_{h}(\mu_{new})$ for new parameter value $\mu_{new}$.
+
+Once the offline phase is completed and the neural networks are optimized, this code predicts the high-fidelity solution **u_h(mu_new)** for a new parameter value **mu_new**.
 
 ### Aude_test_case_online.py
-This code use the hight fidelity solver to compute the reference solution $\mathbf{u}_{h}(\mu_{new})$ and compare it to the reduced basis one $\mathbf{u}_{rb}(\mu_{new})$ predicted one. The code also plot the diference, histograme of errors and mean averaged arrors in function of time **B_er**.
+
+Uses the high-fidelity solver to compute the reference solution **u_h(mu_new)** and compares it with the reduced-order prediction **u_rb(mu_new)**. The code also plots the difference between both solutions, the error histograms, and the mean averaged errors as a function of time.
+
+```
+```
 
 ## Requirements
 
