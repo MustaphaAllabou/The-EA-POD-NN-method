@@ -21,7 +21,7 @@ Construct the POD reduced basis $\mathbf{B}_{rb}$ using the generated high fidel
 
 ### POD_Basis_error.py
 
-Constructs the reduced basis $$\mathbf{B}_{er}$$ of the error matrix $$\mathbf{E}$$, given a reduced basis $$\mathbf{B}_{rb}$$.
+Constructs the reduced basis $\mathbf{B}_{er}$ of the error matrix $\mathbf{E}$, given a reduced basis $\mathbf{B}_{rb}$.
 
 The error matrix is defined as:
 
