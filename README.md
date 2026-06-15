@@ -11,15 +11,15 @@ This project contains the code developped for the reduction of the txo dimension
 The main code which call all classes and modules from other codes, it contains all instructions to un all the steps of the EA-POD-NN method from the parameter generation to the results of comparison between the high fidelity solution and the reduced one. 
 
 ### parameter_generator.py 
-construct the parameter space and store them in hdf5 file to be used lated for the Dassflow solver, the code also generate the input parameters for EA-POD-NN reduction method.
+Construct the parameter space and store them in hdf5 file to be used lated for the Dassflow solver, the code also generate the input parameters for EA-POD-NN reduction method.
 
 ### Parallel_code.py
-construct the high fidelity simulations in parallel using the finite volumes based solver (Dassflow2d).
+Construct the high fidelity simulations in parallel using the finite volumes based solver (Dassflow2d).
 
 ### POD_Basis.py
 Construct the POD reduced baisi $\mathbf{B}_{rb}$ using the generated high fidelity snapshots $\mathbf{S}$.
 
-### `POD_Basis_error.py`
+### POD_Basis_error.py
 
 Constructs the reduced basis $\mathbf{B}_{er}$ of the error matrix $\mathbf{E}$, given a reduced basis $\mathbf{B}_{rb}$.
 
