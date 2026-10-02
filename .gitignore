@@ -33,3 +33,4 @@ EA_POD_NN_reduction_method_main.ipynb
 Token_git
 *.ipynb
 Aude_test_case_online_jupyter.py
+.DS_Store
