@@ -34,3 +34,6 @@ Token_git
 *.ipynb
 Aude_test_case_online_jupyter.py
 .DS_Store
+results/
+results_toy/
+__pycache__/
