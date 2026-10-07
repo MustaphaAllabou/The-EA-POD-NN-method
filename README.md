@@ -5,7 +5,7 @@ Proper Orthogonal Decomposition (POD) with deep neural networks, developed durin
 Institut de Mathématiques de Toulouse (INSA Toulouse).
 
 The method was applied to the 2D shallow water equations to simulate floodplain dynamics of the Aude
-river (France), using [DassFlow](https://www.math.univ-toulouse.fr/DassFlow/) as the high-fidelity solver.
+river (France), using [DassFlow](https://dasshydro.github.io/codes_presentation/pres_dassflow/) as the high-fidelity solver.
 
 > **Paper**: M. Allabou, R. Bouclier, P.-A. Garambois, J. Monnier.
 > *Reduction of the Shallow Water System by an Error Aware POD-Neural Network Method: Application to
