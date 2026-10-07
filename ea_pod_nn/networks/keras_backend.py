@@ -32,7 +32,7 @@ def train(X_train, Y_train, X_val, Y_val, neurons, config):
 
 
 def predict(model, X):
-    return np.asarray(model.predict(X, verbose=0))
+    return np.asarray(model(tf.convert_to_tensor(X, dtype=tf.float32), training=False))
 
 
 def save(model, path):
