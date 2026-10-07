@@ -115,4 +115,7 @@ If you use this code, please cite:
 
 ## Contact
 
-Mustapha Allabou — Institut de Mathématiques de Toulouse, INSA Toulouse
+**Mustapha Allabou** — Institut de Mathématiques de Toulouse, INSA Toulouse
+
+- Professional: allabou [at] insa-toulouse.fr
+- Personal: allaboumustapha96 [at] gmail.com
