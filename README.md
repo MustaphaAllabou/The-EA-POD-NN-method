@@ -1,69 +1,117 @@
-# The-EA-POD-NN-method
-Code developed as part of my thesis on the EA-POD-NN method.
+# EA-POD-NN: Error-Aware POD–Neural Network reduced-order modelling
 
-This repository contains the code developed for my thesis work on the EA-POD-NN method.
+Python implementation of the **EA-POD-NN** method, a non-intrusive reduced-order model that combines
+Proper Orthogonal Decomposition (POD) with deep neural networks, developed during my PhD thesis at the
+Institut de Mathématiques de Toulouse (INSA Toulouse).
 
-## Description
+The method was applied to the 2D shallow water equations to simulate floodplain dynamics of the Aude
+river (France), using [DassFlow](https://www.math.univ-toulouse.fr/DassFlow/) as the high-fidelity solver.
 
-This project contains the code developped for the reduction of the txo dimensional shallow water equations. The methode develloped here is a non-intusive method, since it uses the high fidelity solver (Dassflow here) only to generate the snapshots. the the training and online phase are completly decoupled from the pdf and the solver. The code is divided into several parts:
-### EA-POD-NN-REDUCTION-METHOD.py 
+> **Paper**: M. Allabou, R. Bouclier, P.-A. Garambois, J. Monnier.
+> *Reduction of the Shallow Water System by an Error Aware POD-Neural Network Method: Application to
+> Floodplain Dynamics.* Computer Methods in Applied Mechanics and Engineering, 2024.
+> Open-access version: [hal-04391872](https://hal.inrae.fr/hal-04391872)
 
-The main code which call all classes and modules from other codes, it contains all instructions to un all the steps of the EA-POD-NN method from the parameter generation to the results of comparison between the high fidelity solution and the reduced one. 
+## The method in short
 
-### parameter_generator.py 
-Construct the parameter space and store them in hdf5 file to be used lated for the Dassflow solver, the code also generate the input parameters for EA-POD-NN reduction method.
+**Offline stage** (done once):
 
-### Parallel_code.py
-Construct the high fidelity simulations in parallel using the finite volumes based solver (Dassflow2d).
+1. Run the high-fidelity (HF) solver for a set of parameters μ and collect the solutions (snapshots).
+2. Compute a POD basis **B_rb** with a limited number of modes.
+3. Compute a second POD basis **B_er** of the projection error `S − B_rb B_rbᵀ S`.
+4. Train two neural networks mapping (μ, t) to the coefficients on **B_rb** and on **B_er**.
 
-### POD_Basis.py
-Construct the POD reduced basis $\mathbf{B}\_{rb}$ using the generated high fidelity snapshots **S**.
- 
-### POD_Basis_error.py
-
-Construct the POD reduced basis **B_er** of the error matrix **E**, computed from a given reduced basis **B_rb** and the high-fidelity snapshot matrix **S**.
-
-The error matrix is defined as:
-
-````
-The error matrix is defined as:
+**Online stage** (real time, no HF solver needed):
 
 ```
-E = S - B_rb B_rb^T S
-````
-
-where **B_rb B_rb^T S** is the projection of **S** onto the reduced basis **B_rb**.
-
-### EA_POD-NN_offline.py
-
-Uses the snapshots and errors projected onto their corresponding reduced spaces, and trains the neural networks to learn the reduced coefficients of the snapshots and errors:
-
-```
-S_rb = B_rb^T S
-S_er = B_er^T E
+u(μ, t) ≈ B_rb · NN_rb(μ, t) + B_er · NN_er(μ, t)
 ```
 
-where **S_rb** and **S_er** are the reduced representations of the snapshots and errors, respectively.
+Taking the POD projection error into account gives better accuracy while keeping few POD modes, hence
+small networks and a small training set — even for convection-dominated flows.
 
-### EA_POD-NN_online.py
-
-Once the offline phase is completed and the neural networks are optimized, this code predicts the high-fidelity solution **u_h(mu_new)** for a new parameter value **mu_new**.
-
-### Aude_test_case_online.py
-
-Uses the high-fidelity solver to compute the reference solution **u_h(mu_new)** and compares it with the reduced-order prediction **u_rb(mu_new)**. The code also plots the difference between both solutions, the error histograms, and the mean averaged errors as a function of time. 
+## Repository structure
 
 ```
+├── main.py                    # Aude test case with DassFlow: offline / online
+├── requirements.txt
+├── ea_pod_nn/
+│   ├── pod.py                 # POD bases B_rb and B_er
+│   ├── offline.py             # offline stage: bases + training of the two networks
+│   ├── online.py              # online stage: fast prediction
+│   ├── postprocessing.py      # error analysis and plots
+│   ├── hydrographs.py         # inflow hydrographs and parameter space (Aude case)
+│   └── solvers/
+│       ├── base.py            # HFSolver: common interface for any HF solver
+│       ├── dassflow.py        # DassFlow2D implementation
+│       └── template.py        # template to plug another software
+└── examples/
+    └── toy_solver_demo.py     # full pipeline with an analytical solver (no DassFlow needed)
 ```
 
-## Requirements
+## Installation
 
-List of required Python packages or software.
+```bash
+git clone https://github.com/MustaphaAllabou/The-EA-POD-NN-method.git
+cd The-EA-POD-NN-method
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+```
 
-## Usage
+The Aude test case additionally requires DassFlow2D and its Python wrapper `dassflow2d`.
 
-Instructions to run the code.
+## Quick start
 
-## Author
+Run the whole method in a few seconds on an analytical problem:
 
-Mustapha Allabou
+```bash
+python examples/toy_solver_demo.py
+```
+
+Aude test case (set the DassFlow paths at the top of `main.py` first):
+
+```bash
+python main.py offline   # HF simulations, POD bases, training
+python main.py online    # prediction and comparison with a HF reference
+```
+
+Results are written in `results/`.
+
+## Using another simulation software
+
+The method only needs snapshots, so any solver can be used. Subclass `HFSolver` and implement one method:
+
+```python
+from ea_pod_nn import HFSolver
+
+class MySolver(HFSolver):
+    variables = ("h", "u", "v")
+
+    def run(self, mu, run_id, worker_id=0):
+        # launch your simulation for the parameters mu, then return
+        # times: (n_t,) and fields: (n_vars * n_nodes, n_t)
+        return times, fields
+```
+
+Parallel runs, caching of the simulations and construction of the training data are handled by
+`HFSolver.compute_snapshots`. See `ea_pod_nn/solvers/template.py`.
+
+## Citation
+
+If you use this code, please cite:
+
+```bibtex
+@article{allabou2024eapodnn,
+  title   = {Reduction of the Shallow Water System by an Error Aware POD-Neural Network Method:
+             Application to Floodplain Dynamics},
+  author  = {Allabou, Mustapha and Bouclier, Robin and Garambois, Pierre-Andr{\'e} and Monnier, J{\'e}r{\^o}me},
+  journal = {Computer Methods in Applied Mechanics and Engineering},
+  year    = {2024},
+  note    = {HAL: hal-04391872}
+}
+```
+
+## Contact
+
+Mustapha Allabou — Institut de Mathématiques de Toulouse, INSA Toulouse

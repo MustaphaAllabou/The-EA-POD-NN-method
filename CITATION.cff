@@ -1,0 +1,23 @@
+cff-version: 1.2.0
+message: "If you use this code, please cite the article below."
+title: "EA-POD-NN: Error-Aware POD-Neural Network reduced-order modelling"
+authors:
+  - family-names: Allabou
+    given-names: Mustapha
+    affiliation: "Institut de Mathématiques de Toulouse, INSA Toulouse"
+repository-code: "https://github.com/MustaphaAllabou/The-EA-POD-NN-method"
+preferred-citation:
+  type: article
+  title: "Reduction of the Shallow Water System by an Error Aware POD-Neural Network Method: Application to Floodplain Dynamics"
+  authors:
+    - family-names: Allabou
+      given-names: Mustapha
+    - family-names: Bouclier
+      given-names: Robin
+    - family-names: Garambois
+      given-names: Pierre-André
+    - family-names: Monnier
+      given-names: Jérôme
+  journal: "Computer Methods in Applied Mechanics and Engineering"
+  year: 2024
+  url: "https://hal.inrae.fr/hal-04391872"
