@@ -30,6 +30,8 @@ u(μ, t) ≈ B_rb · NN_rb(μ, t) + B_er · NN_er(μ, t)
 Taking the POD projection error into account gives better accuracy while keeping few POD modes, hence
 small networks and a small training set — even for convection-dominated flows.
 
+The NNs can be trained with **TensorFlow/Keras** or **PyTorch**.
+
 ## Repository structure
 
 ```
@@ -41,6 +43,9 @@ small networks and a small training set — even for convection-dominated flows.
 │   ├── online.py              # online stage: fast prediction
 │   ├── postprocessing.py      # error analysis and plots
 │   ├── hydrographs.py         # inflow hydrographs and parameter space (Aude case)
+│   ├── networks/
+│   │   ├── keras_backend.py   # neural networks with TensorFlow / Keras
+│   │   └── torch_backend.py   # neural networks with PyTorch
 │   └── solvers/
 │       ├── base.py            # HFSolver: common interface for any HF solver
 │       ├── dassflow.py        # DassFlow2D implementation
@@ -59,14 +64,23 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-The Aude test case additionally requires DassFlow2D and its Python wrapper `dassflow2d`.
+Only one of the two NN libraries is required. To install a single one:
+
+```bash
+pip install numpy scipy matplotlib tensorflow   # TensorFlow / Keras
+pip install numpy scipy matplotlib torch        # PyTorch
+```
+
+The Aude test case additionally requires DassFlow2D and its Python wrapper `dassflow2d`
+(plus `h5py` and `pyvista`).
 
 ## Quick start
 
 Run the whole method in a few seconds on an analytical problem:
 
 ```bash
-python examples/toy_solver_demo.py
+python examples/toy_solver_demo.py          # TensorFlow / Keras
+python examples/toy_solver_demo.py torch    # PyTorch
 ```
 
 Aude test case (set the DassFlow paths at the top of `main.py` first):
@@ -74,9 +88,24 @@ Aude test case (set the DassFlow paths at the top of `main.py` first):
 ```bash
 python main.py offline   # HF simulations, POD bases, training
 python main.py online    # prediction and comparison with a HF reference
+python main.py all       # both stages
 ```
 
 Results are written in `results/`.
+
+## Choosing the NN library
+
+The library is selected in the configuration of the networks:
+
+```python
+from ea_pod_nn import NNConfig
+
+NNConfig(backend="keras")   # TensorFlow / Keras (default)
+NNConfig(backend="torch")   # PyTorch
+```
+
+Both use the same architecture (fully-connected layers with ReLU, Adam optimizer, MSE loss).
+The online stage automatically detects which library was used for training.
 
 ## Using another simulation software
 
