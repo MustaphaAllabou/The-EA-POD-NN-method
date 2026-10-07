@@ -1,7 +1,9 @@
 numpy
 scipy
 matplotlib
-tensorflow>=2.12
+# Neural networks: one of the two backends is enough
+tensorflow>=2.12   # backend="keras"
+torch>=2.0         # backend="torch"
 # DassFlow test case only (dassflow2d is installed with DassFlow itself):
 h5py
 pyvista

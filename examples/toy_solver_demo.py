@@ -4,7 +4,8 @@
 No simulation software is needed: this shows how to plug a solver into the
 method and lets you test the installation in a few seconds.
 
-    python examples/toy_solver_demo.py
+    python examples/toy_solver_demo.py          # TensorFlow / Keras
+    python examples/toy_solver_demo.py torch    # PyTorch
 """
 import os
 import sys
@@ -35,17 +36,20 @@ class ToySolver(HFSolver):
 
 
 if __name__ == "__main__":
+    backend = sys.argv[1] if len(sys.argv) > 1 else "keras"
+    output_dir = f"results_toy/model_{backend}"
     solver = ToySolver()
     rng = np.random.default_rng(0)
     mus = np.column_stack([rng.uniform(0.5, 1.5, 30), rng.uniform(0.2, 0.6, 30)])
 
     snapshots = solver.compute_snapshots(mus, "results_toy/snapshots")
     train_ea_pod_nn(snapshots, epsilon_pod=1e-3, epsilon_err=1e-1,
-                    config=NNConfig(neurons=32, hidden_layers=4, epochs=300, batch_size=32),
-                    output_dir="results_toy/model")
+                    config=NNConfig(backend=backend, neurons=32, hidden_layers=4, epochs=300,
+                                    batch_size=32, verbose=0),
+                    output_dir=output_dir)
 
     mu_new = np.array([1.1, 0.45])
     times, reference = solver.run(mu_new, run_id="reference")
-    prediction = EAPODNNPredictor.load("results_toy/model").predict(mu_new, times)
+    prediction = EAPODNNPredictor.load(output_dir).predict(mu_new, times)
     rel = np.linalg.norm(reference - prediction) / np.linalg.norm(reference)
-    print(f"Relative error on a new parameter: {rel:.2%}")
+    print(f"[{backend}] Relative error on a new parameter: {rel:.2%}")

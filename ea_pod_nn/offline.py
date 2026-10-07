@@ -12,11 +12,13 @@ from typing import Optional
 import matplotlib.pyplot as plt
 import numpy as np
 
+from .networks import get_backend
 from .pod import build_reduced_bases, plot_eigenvalues
 
 
 @dataclass
 class NNConfig:
+    backend: str = "keras"          # "keras" (TensorFlow) or "torch" (PyTorch)
     neurons: int = 20               # neurons per hidden layer, network 1
     neurons_er: Optional[int] = None  # network 2; default 2 * Ner
     hidden_layers: int = 11
@@ -27,6 +29,7 @@ class NNConfig:
     test_fraction: float = 0.1      # fraction of simulations kept for the final test
     patience: Optional[int] = None  # early stopping on val_loss (None = off)
     seed: int = 0
+    verbose: int = 1
 
 
 class MinMax:
@@ -57,25 +60,13 @@ def split_by_simulation(sim_id, val_fraction, test_fraction, seed=0):
     return ~np.isin(sim_id, np.r_[test, val]), np.isin(sim_id, val), np.isin(sim_id, test)
 
 
-def build_network(input_dim, output_dim, neurons, hidden_layers, learning_rate):
-    import tensorflow as tf
-
-    layers = [tf.keras.Input(shape=(input_dim,))]
-    layers += [tf.keras.layers.Dense(neurons, activation="relu") for _ in range(hidden_layers)]
-    layers += [tf.keras.layers.Dense(output_dim)]
-    model = tf.keras.Sequential(layers)
-    model.compile(optimizer=tf.keras.optimizers.Adam(learning_rate=learning_rate), loss="mse")
-    return model
-
-
 def train_ea_pod_nn(snapshots, epsilon_pod, epsilon_err, config=None,
                     output_dir="results/model", show_plots=False):
     """Full offline phase. Everything needed online is saved in ``output_dir``."""
-    import tensorflow as tf
-
     config = config or NNConfig()
+    backend = get_backend(config.backend)
+    backend.set_seed(config.seed)
     os.makedirs(output_dir, exist_ok=True)
-    tf.keras.utils.set_random_seed(config.seed)
 
     # 1. Reduced bases
     rb, er, Er = build_reduced_bases(snapshots.S, epsilon_pod, epsilon_err)
@@ -90,36 +81,29 @@ def train_ea_pod_nn(snapshots, epsilon_pod, epsilon_err, config=None,
     p_scale = MinMax.fit(snapshots.P, axis=0)
     rb_scale, er_scale = MinMax.fit(Urb), MinMax.fit(Uer)
     X = p_scale.transform(snapshots.P)
-    Y, Y_er = rb_scale.transform(Urb), er_scale.transform(Uer)
+    targets = {"rb": rb_scale.transform(Urb), "er": er_scale.transform(Uer)}
+    neurons = {"rb": config.neurons, "er": config.neurons_er or 2 * er.n_modes}
 
     train, val, test = split_by_simulation(snapshots.sim_id, config.val_fraction,
                                            config.test_fraction, config.seed)
-    print(f"[NN] samples: train {train.sum()}, val {val.sum()}, test {test.sum()}")
+    print(f"[NN] backend {config.backend}: train {train.sum()}, val {val.sum()}, "
+          f"test {test.sum()} samples")
 
-    # 3. Training
-    callbacks = []
-    if config.patience:
-        callbacks.append(tf.keras.callbacks.EarlyStopping(
-            monitor="val_loss", patience=config.patience, restore_best_weights=True))
-    neurons_er = config.neurons_er or 2 * er.n_modes
-    histories = {}
-    networks = {}
-    for name, target, n_out, neurons in (("rb", Y, rb.n_modes, config.neurons),
-                                         ("er", Y_er, er.n_modes, neurons_er)):
-        net = build_network(X.shape[1], n_out, neurons, config.hidden_layers,
-                            config.learning_rate)
-        histories[name] = net.fit(X[train], target[train], epochs=config.epochs,
-                                  batch_size=config.batch_size,
-                                  validation_data=(X[val], target[val]),
-                                  callbacks=callbacks, verbose=1).history
+    # 3. Training of the two networks
+    networks, histories = {}, {}
+    for name, Y in targets.items():
+        print(f"[NN] training network {name} ({neurons[name]} neurons per layer)")
+        model, histories[name] = backend.train(X[train], Y[train], X[val], Y[val],
+                                               neurons[name], config)
         if test.any():
-            print(f"[NN] network {name}: test MSE = "
-                  f"{net.evaluate(X[test], target[test], verbose=0):.3e}")
-        net.save(os.path.join(output_dir, f"network_{name}.keras"))
-        networks[name] = net
+            mse = np.mean((backend.predict(model, X[test]) - Y[test]) ** 2)
+            print(f"[NN] network {name}: test MSE = {mse:.3e}")
+        backend.save(model, os.path.join(output_dir, f"network_{name}"))
+        networks[name] = model
 
     # 4. Everything the online phase needs
     np.savez(os.path.join(output_dir, "reduced_model.npz"),
+             backend=config.backend,
              Brb=Brb, Ber=Ber, variables=np.array(snapshots.variables),
              p_min=p_scale.min, p_max=p_scale.max,
              rb_min=rb_scale.min, rb_max=rb_scale.max,

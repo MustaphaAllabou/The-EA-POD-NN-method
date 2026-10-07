@@ -44,7 +44,8 @@ T_RISE = 46800.
 
 EPSILON_POD = 1e-3
 EPSILON_ERROR = 1e-1
-NN = NNConfig(neurons=20, epochs=10, batch_size=10, learning_rate=1e-3,
+NN = NNConfig(backend="keras",     # or "torch" for PyTorch
+              neurons=20, epochs=10, batch_size=10, learning_rate=1e-3,
               val_fraction=0.2, test_fraction=0.1)
 N_JOBS = 16
 

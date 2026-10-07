@@ -8,13 +8,15 @@ import os
 
 import numpy as np
 
+from .networks import get_backend
 from .offline import MinMax
 from .solvers.base import split_variables
 
 
 class EAPODNNPredictor:
     def __init__(self, network_rb, network_er, Brb, Ber, p_scale, rb_scale, er_scale,
-                 variables):
+                 variables, backend="keras"):
+        self.backend = get_backend(backend) if isinstance(backend, str) else backend
         self.network_rb, self.network_er = network_rb, network_er
         self.Brb, self.Ber = Brb, Ber
         self.p_scale, self.rb_scale, self.er_scale = p_scale, rb_scale, er_scale
@@ -22,22 +24,23 @@ class EAPODNNPredictor:
 
     @classmethod
     def load(cls, model_dir="results/model"):
-        import tensorflow as tf
-
+        """Reload a reduced model; the backend used for training is detected."""
         d = np.load(os.path.join(model_dir, "reduced_model.npz"))
-        return cls(tf.keras.models.load_model(os.path.join(model_dir, "network_rb.keras")),
-                   tf.keras.models.load_model(os.path.join(model_dir, "network_er.keras")),
+        backend = get_backend(str(d["backend"]) if "backend" in d else "keras")
+        return cls(backend.load(os.path.join(model_dir, "network_rb")),
+                   backend.load(os.path.join(model_dir, "network_er")),
                    d["Brb"], d["Ber"],
                    MinMax(d["p_min"], d["p_max"]), MinMax(d["rb_min"], d["rb_max"]),
-                   MinMax(d["er_min"], d["er_max"]), [str(v) for v in d["variables"]])
+                   MinMax(d["er_min"], d["er_max"]), [str(v) for v in d["variables"]],
+                   backend)
 
     def predict(self, mu, times):
         """Reduced solution (n_dofs, n_t) for parameters ``mu`` at ``times``."""
         times = np.atleast_1d(np.asarray(times, float))
         X = np.column_stack([np.tile(np.asarray(mu, float), (len(times), 1)), times])
         X = self.p_scale.transform(X)
-        urb = self.rb_scale.inverse(np.asarray(self.network_rb.predict(X, verbose=0)))
-        uer = self.er_scale.inverse(np.asarray(self.network_er.predict(X, verbose=0)))
+        urb = self.rb_scale.inverse(self.backend.predict(self.network_rb, X))
+        uer = self.er_scale.inverse(self.backend.predict(self.network_er, X))
         return self.Brb @ urb.T + self.Ber @ uer.T
 
     def predict_fields(self, mu, times):

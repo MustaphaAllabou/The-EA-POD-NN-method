@@ -1,7 +1,7 @@
 # EA-POD-NN: Error-Aware POD–Neural Network reduced-order modelling
 
 Python implementation of the **EA-POD-NN** method, a non-intrusive reduced-order model that combines
-Proper Orthogonal Decomposition (POD) with deep neural networks, developed during my PhD thesis at the
+Proper Orthogonal Decomposition (POD) with deep neural networks (NNs), developed during my PhD thesis at the
 Institut de Mathématiques de Toulouse (INSA Toulouse).
 
 The method was applied to the 2D shallow water equations to simulate floodplain dynamics of the Aude
@@ -19,7 +19,7 @@ river (France), using [DassFlow](https://dasshydro.github.io/codes_presentation/
 1. Run the HF solver for a set of parameters μ and collect the solutions (snapshots).
 2. Compute a POD basis **B_rb** with a limited number of modes.
 3. Compute a second POD basis **B_er** of the projection error `S − B_rb B_rbᵀ S`.
-4. Train two neural networks mapping (μ, t) to the coefficients on **B_rb** and on **B_er**.
+4. Train two NNs mapping (μ, t) to the coefficients on **B_rb** and on **B_er**.
 
 **Online stage** (real time, no HF solver needed):
 
