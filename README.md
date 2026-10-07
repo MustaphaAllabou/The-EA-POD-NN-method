@@ -5,18 +5,18 @@ Proper Orthogonal Decomposition (POD) with deep neural networks, developed durin
 Institut de Mathématiques de Toulouse (INSA Toulouse).
 
 The method was applied to the 2D shallow water equations to simulate floodplain dynamics of the Aude
-river (France), using [DassFlow](https://dasshydro.github.io/codes_presentation/pres_dassflow/) as the high-fidelity solver.
+river (France), using [DassFlow](https://dasshydro.github.io/codes_presentation/pres_dassflow/) as the High-Fidelity (HF) solver.
 
 > **Paper**: M. Allabou, R. Bouclier, P.-A. Garambois, J. Monnier.
 > *Reduction of the Shallow Water System by an Error Aware POD-Neural Network Method: Application to
 > Floodplain Dynamics.* Computer Methods in Applied Mechanics and Engineering, 2024.
 > Open-access version: [hal-04391872](https://hal.inrae.fr/hal-04391872)
 
-## The method in short
+## The method principles
 
 **Offline stage** (done once):
 
-1. Run the high-fidelity (HF) solver for a set of parameters μ and collect the solutions (snapshots).
+1. Run the HF solver for a set of parameters μ and collect the solutions (snapshots).
 2. Compute a POD basis **B_rb** with a limited number of modes.
 3. Compute a second POD basis **B_er** of the projection error `S − B_rb B_rbᵀ S`.
 4. Train two neural networks mapping (μ, t) to the coefficients on **B_rb** and on **B_er**.
@@ -102,13 +102,14 @@ Parallel runs, caching of the simulations and construction of the training data 
 If you use this code, please cite:
 
 ```bibtex
-@article{allabou2024eapodnn,
-  title   = {Reduction of the Shallow Water System by an Error Aware POD-Neural Network Method:
-             Application to Floodplain Dynamics},
-  author  = {Allabou, Mustapha and Bouclier, Robin and Garambois, Pierre-Andr{\'e} and Monnier, J{\'e}r{\^o}me},
-  journal = {Computer Methods in Applied Mechanics and Engineering},
-  year    = {2024},
-  note    = {HAL: hal-04391872}
+@article{allabou2024,
+  title={Reduction of the shallow water system by an error aware POD-neural network method: Application to floodplain dynamics},
+  author={Allabou, Mustapha and Bouclier, Robin and Garambois, Pierre-Andr{\'e} and Monnier, Jerome},
+  journal={Computer Methods in Applied Mechanics and Engineering},
+  volume={428},
+  pages={117094},
+  year={2024},
+  publisher={Elsevier}
 }
 ```
 
