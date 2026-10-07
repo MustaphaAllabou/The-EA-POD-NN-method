@@ -38,3 +38,4 @@ results/
 results_toy/
 __pycache__/
 envoyer.sh
+envoyer_comandes.sh
