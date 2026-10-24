@@ -1,25 +1,25 @@
 # EA-POD-NN: Error-Aware POD–Neural Network reduced-order modelling
 
 Python implementation of the **EA-POD-NN** method, a non-intrusive reduced-order model that combines
-Proper Orthogonal Decomposition (POD) with deep neural networks (NNs), developed during my PhD thesis at the
+Proper Orthogonal Decomposition (POD) with deep neural networks, developed during my PhD thesis at the
 Institut de Mathématiques de Toulouse (INSA Toulouse).
 
 The method was applied to the 2D shallow water equations to simulate floodplain dynamics of the Aude
-river (France), using [DassFlow](https://dasshydro.github.io/codes_presentation/pres_dassflow/) as the High-Fidelity (HF) solver.
+river (France), using [DassFlow](https://www.math.univ-toulouse.fr/DassFlow/) as the high-fidelity solver.
 
 > **Paper**: M. Allabou, R. Bouclier, P.-A. Garambois, J. Monnier.
 > *Reduction of the Shallow Water System by an Error Aware POD-Neural Network Method: Application to
 > Floodplain Dynamics.* Computer Methods in Applied Mechanics and Engineering, 2024.
 > Open-access version: [hal-04391872](https://hal.inrae.fr/hal-04391872)
 
-## The method principles
+## The method in short
 
 **Offline stage** (done once):
 
-1. Run the HF solver for a set of parameters μ and collect the solutions (snapshots).
+1. Run the high-fidelity (HF) solver for a set of parameters μ and collect the solutions (snapshots).
 2. Compute a POD basis **B_rb** with a limited number of modes.
 3. Compute a second POD basis **B_er** of the projection error `S − B_rb B_rbᵀ S`.
-4. Train two NNs mapping (μ, t) to the coefficients on **B_rb** and on **B_er**.
+4. Train two neural networks mapping (μ, t) to the coefficients on **B_rb** and on **B_er**.
 
 **Online stage** (real time, no HF solver needed):
 
@@ -29,8 +29,6 @@ u(μ, t) ≈ B_rb · NN_rb(μ, t) + B_er · NN_er(μ, t)
 
 Taking the POD projection error into account gives better accuracy while keeping few POD modes, hence
 small networks and a small training set — even for convection-dominated flows.
-
-The NNs can be trained with **TensorFlow/Keras** or **PyTorch**.
 
 ## Repository structure
 
@@ -43,9 +41,6 @@ The NNs can be trained with **TensorFlow/Keras** or **PyTorch**.
 │   ├── online.py              # online stage: fast prediction
 │   ├── postprocessing.py      # error analysis and plots
 │   ├── hydrographs.py         # inflow hydrographs and parameter space (Aude case)
-│   ├── networks/
-│   │   ├── keras_backend.py   # neural networks with TensorFlow / Keras
-│   │   └── torch_backend.py   # neural networks with PyTorch
 │   └── solvers/
 │       ├── base.py            # HFSolver: common interface for any HF solver
 │       ├── dassflow.py        # DassFlow2D implementation
@@ -64,23 +59,14 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-Only one of the two NN libraries is required. To install a single one:
-
-```bash
-pip install numpy scipy matplotlib tensorflow   # TensorFlow / Keras
-pip install numpy scipy matplotlib torch        # PyTorch
-```
-
-The Aude test case additionally requires DassFlow2D and its Python wrapper `dassflow2d`
-(plus `h5py` and `pyvista`).
+The Aude test case additionally requires DassFlow2D and its Python wrapper `dassflow2d`.
 
 ## Quick start
 
 Run the whole method in a few seconds on an analytical problem:
 
 ```bash
-python examples/toy_solver_demo.py          # TensorFlow / Keras
-python examples/toy_solver_demo.py torch    # PyTorch
+python examples/toy_solver_demo.py
 ```
 
 Aude test case (set the DassFlow paths at the top of `main.py` first):
@@ -88,24 +74,9 @@ Aude test case (set the DassFlow paths at the top of `main.py` first):
 ```bash
 python main.py offline   # HF simulations, POD bases, training
 python main.py online    # prediction and comparison with a HF reference
-python main.py all       # both stages
 ```
 
 Results are written in `results/`.
-
-## Choosing the NN library
-
-The library is selected in the configuration of the networks:
-
-```python
-from ea_pod_nn import NNConfig
-
-NNConfig(backend="keras")   # TensorFlow / Keras (default)
-NNConfig(backend="torch")   # PyTorch
-```
-
-Both use the same architecture (fully-connected layers with ReLU, Adam optimizer, MSE loss).
-The online stage automatically detects which library was used for training.
 
 ## Using another simulation software
 
@@ -131,20 +102,16 @@ Parallel runs, caching of the simulations and construction of the training data 
 If you use this code, please cite:
 
 ```bibtex
-@article{allabou2024,
-  title={Reduction of the shallow water system by an error aware POD-neural network method: Application to floodplain dynamics},
-  author={Allabou, Mustapha and Bouclier, Robin and Garambois, Pierre-Andr{\'e} and Monnier, Jerome},
-  journal={Computer Methods in Applied Mechanics and Engineering},
-  volume={428},
-  pages={117094},
-  year={2024},
-  publisher={Elsevier}
+@article{allabou2024eapodnn,
+  title   = {Reduction of the Shallow Water System by an Error Aware POD-Neural Network Method:
+             Application to Floodplain Dynamics},
+  author  = {Allabou, Mustapha and Bouclier, Robin and Garambois, Pierre-Andr{\'e} and Monnier, J{\'e}r{\^o}me},
+  journal = {Computer Methods in Applied Mechanics and Engineering},
+  year    = {2024},
+  note    = {HAL: hal-04391872}
 }
 ```
 
 ## Contact
 
-**Mustapha Allabou** — Institut de Mathématiques de Toulouse, INSA Toulouse
-
-- Professional: allabou@insa-toulouse.fr
-- Personal: allaboumustapha96@gmail.com
+Mustapha Allabou — Institut de Mathématiques de Toulouse, INSA Toulouse
