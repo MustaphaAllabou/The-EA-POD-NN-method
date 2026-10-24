@@ -42,7 +42,7 @@ MU_ONLINE = np.array([31200. + 46800., 1100., 30200. + 46800., 300.])
 HYDROGRAPH_TIMES = np.arange(3600., 172800. + 3600., 3600.)   # 48 values
 T_RISE = 46800.
 
-EPSILON_POD = 1e-3
+EPSILON_POD = 1e-7
 EPSILON_ERROR = 1e-1
 NN = NNConfig(backend="keras",     # or "torch" for PyTorch
               neurons=20, epochs=10, batch_size=10, learning_rate=1e-3,
