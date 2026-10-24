@@ -138,13 +138,18 @@ Parallel runs, caching of the simulations and construction of the training data 
 If you use this code, please cite:
 
 ```bibtex
-@article{allabou2024eapodnn,
-  title   = {Reduction of the Shallow Water System by an Error Aware POD-Neural Network Method:
-             Application to Floodplain Dynamics},
-  author  = {Allabou, Mustapha and Bouclier, Robin and Garambois, Pierre-Andr{\'e} and Monnier, J{\'e}r{\^o}me},
-  journal = {Computer Methods in Applied Mechanics and Engineering},
-  year    = {2024},
-  note    = {HAL: hal-04391872}
+@article{ALLABOU2024117094,
+title = {Reduction of the shallow water system by an error aware POD-neural network method: Application to floodplain dynamics},
+journal = {Computer Methods in Applied Mechanics and Engineering},
+volume = {428},
+pages = {117094},
+year = {2024},
+issn = {0045-7825},
+doi = {https://doi.org/10.1016/j.cma.2024.117094},
+url = {https://www.sciencedirect.com/science/article/pii/S0045782524003505},
+author = {M. Allabou and R. Bouclier and P.A. Garambois and J. Monnier},
+keywords = {Non-intrusive reduced order models, Shallow water equations, Proper orthogonal decomposition, Artificial neural network, Error learning, River hydraulics},
+abstract = {In this study, we elaborate on and evaluate a new reduced basis method for model reduction of the shallow water equations using Proper Orthogonal Decomposition (POD) and artificial Neural Networks (NNs). The method begins with the POD technique to construct reduced bases from high-resolution solutions, followed by training two deep NNs to learn associated coefficients in the reduced bases. The approach follows an offline–online strategy: the POD reduced basis, along with the training of the NNs, is performed in an offline stage, and then the surrogate model can be used in an online stage for real-time predictions. The method takes into account the POD-based projection error, enabling the attainment of higher accuracy while preserving a limited number of POD modes, even in the delicate situation of convection-dominated flow problems. This point is crucial in our approach since it enables to limit the output dimension of the NNs, thus providing the opportunity to employ smaller NNs (with less parameters). This may lead to the utilization of potentially smaller datasets (i.e., the snapshots), better generalization of the obtained model, and simpler explainability. The process is non-intrusive: it does not require opening the high-resolution model code. The method is evaluated on a real-world test case aimed at simulating inundation of the Aude river (Southern France). The results show that the proposed method provides satisfying accuracy for the hydraulic variables (water elevation, discharge) compared to the reference high-resolution 2D shallow water model, with quite small dimension NNs. Overall, the method is promising, particularly for performing real-time simulations of large floodplains hydrodynamics.}
 }
 ```
 
