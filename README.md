@@ -45,8 +45,10 @@ small networks and a small training set — even for convection-dominated flows.
 │       ├── base.py            # HFSolver: common interface for any HF solver
 │       ├── dassflow.py        # DassFlow2D implementation
 │       └── template.py        # template to plug another software
-└── examples/
-    └── toy_solver_demo.py     # full pipeline with an analytical solver (no DassFlow needed)
+├── examples/
+│   ├── toy_solver_demo.py     # full pipeline with an analytical solver (no DassFlow needed)
+│   └── fenicsx_solver_demo.py # full pipeline with a FEniCSx finite element solver
+└── docs/figures/              # figures shown in this README
 ```
 
 ## Installation
@@ -61,12 +63,26 @@ pip install -r requirements.txt
 
 The Aude test case additionally requires DassFlow2D and its Python wrapper `dassflow2d`.
 
+The finite element example requires [FEniCSx](https://fenicsproject.org/) (dolfinx), e.g. with conda:
+
+```bash
+conda create -n fenicsx -c conda-forge fenics-dolfinx mpich
+```
+
 ## Quick start
 
 Run the whole method in a few seconds on an analytical problem:
 
 ```bash
 python examples/toy_solver_demo.py
+```
+
+Finite element test case with FEniCSx (see [below](#finite-element-test-case-advection-diffusion-with-fenicsx)):
+
+```bash
+python examples/fenicsx_solver_demo.py solver   # test of the FE solver only
+python examples/fenicsx_solver_demo.py          # full pipeline (Keras)
+python examples/fenicsx_solver_demo.py torch    # full pipeline (PyTorch)
 ```
 
 Aude test case (set the DassFlow paths at the top of `main.py` first):
@@ -76,7 +92,27 @@ python main.py offline   # HF simulations, POD bases, training
 python main.py online    # prediction and comparison with a HF reference
 ```
 
-Results are written in `results/`.
+Results are written in `results/` (Aude case) and `results_toy/` (examples).
+Simulations are cached: delete the corresponding `snapshots_*` folder after changing a solver.
+
+## Finite element test case: advection-diffusion with FEniCSx
+
+`examples/fenicsx_solver_demo.py` applies EA-POD-NN to the steady, convection-dominated problem
+
+```
+-div(Λ(μ) ∇u) + w · ∇u = f   in (0,1)²,   u = 1 on {x = 0},   homogeneous Neumann elsewhere
+Λ(μ) = exp(1.2 (μ + 1)),  μ ∈ [1, 10],   w = 10³ (1 + |cos 2πx|, sin(2πx/0.2))
+f(x, y) = 10³ exp(-(|x − 0.5| + |y − 0.5|) / 0.1)
+```
+
+discretized with P1 finite elements and SUPG stabilisation on a 35×35 mesh (40 snapshots).
+The snapshots store the homogeneous part `u − 1`, so the Dirichlet condition is exactly satisfied by the prediction.
+
+![FE solutions](docs/figures/fenicsx_solutions.png)
+
+EA-POD-NN prediction vs FE reference for a new parameter μ = 2.68:
+
+![Prediction](docs/figures/prediction_vs_reference.png)
 
 ## Using another simulation software
 
